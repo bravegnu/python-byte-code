@@ -42,7 +42,7 @@ image::code-objects.png[]
 
   * Demostrate a hypothetical Stack Machine with an example.
 
------
+------
       loadi 1
       loadi 2
       add
