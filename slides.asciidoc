@@ -1,0 +1,134 @@
+= Python Byte Code Hacking
+
+== Microprocessor Model v1
+
+image::microprocessor-1.png[]
+
+== Microprocessor Model v2
+
+image::microprocessor-2.png[]
+
+== Python Interpreter Model
+
+   * Compiler - translates programs from one language to another
+     language
+
+   * Python's compiler converts Python programs into byte code
+     instructions
+
+   * Python interpreter executes the byte code instructions
+
+   * Python interpreter is modelled after microprocessors
+
+== Python Interpreter Model (2)
+
+  * Python objects are stored in a heap memory
+
+  * Python interpreter creates, modifies and destroys objects in the
+    heap based on instrunctions in the byte code.
+
+image::py-vm-heap.png[]
+
+== Code Objects
+
+image::code-objects.png[]
+
+== Stack Machine
+
+  * Interpreters can be classified into types on how the operands /
+    results are stored:
+    - Register Machines
+    - Stack Machines
+
+  * Demostrate a hypothetical Stack Machine with an example.
+
+-----
+      loadi 1
+      loadi 2
+      add
+      loadi 3
+      add
+------
+
+== Stack Machine (2)
+
+Execution of the instructions is shown in the following diagram:
+
+image::stack-machine.png[]
+
+== Python's Stack Machine
+
+  * Python uses the Stack Machine approach
+
+  * Internal stack is a temporary area that contains pointers to
+    Python objects in the heap.
+
+  * Instructions push and pop data on to the stack.
+
+== Python's Stack Machine
+
+image::py-vm-stack.png[]
+
+== Hack Source 1
+
+[source,python]
+------
+include::code/hack-1.py[]
+------
+
+== Hack Source 2
+
+[source,python]
+------
+include::code/hack-2.py[]
+------
+
+== Hack Source 3
+
+[source,python]
+------
+include::code/hack-3.py[]
+------
+
+== Hack Source 4
+
+[source,python]
+------
+include::code/hack-4.py[]
+------
+
+== Hack Source 5
+
+[source,python]
+------
+include::code/hack-5.py[]
+------
+
+== Hack Source 6
+
+[source,python]
+------
+include::code/hack-6.py[]
+------
+
+== Hack Source 7
+
+[source,python]
+------
+include::code/hack-7.py[]
+------
+
+== Hack Source 8
+
+[source,python]
+------
+include::code/hack-8.py[]
+------
+
+== Hack Source 9
+
+[source,python]
+------
+include::code/hack-9.py[]
+------
+
