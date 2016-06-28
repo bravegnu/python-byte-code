@@ -71,64 +71,55 @@ image::py-vm-stack.png[]
 
 == Hack Source 1
 
-[source,python]
-------
+--
 include::code/hack-1.py[]
-------
+--
 
 == Hack Source 2
 
-[source,python]
-------
+--
 include::code/hack-2.py[]
-------
+--
 
 == Hack Source 3
 
-[source,python]
-------
+--
 include::code/hack-3.py[]
-------
+--
 
 == Hack Source 4
 
-[source,python]
-------
+--
 include::code/hack-4.py[]
-------
+--
 
 == Hack Source 5
 
-[source,python]
-------
+--
 include::code/hack-5.py[]
-------
+--
 
 == Hack Source 6
 
-[source,python]
-------
+--
 include::code/hack-6.py[]
-------
+--
 
 == Hack Source 7
 
-[source,python]
-------
+--
 include::code/hack-7.py[]
-------
+--
 
 == Hack Source 8
 
-[source,python]
-------
+--
 include::code/hack-8.py[]
-------
+--
 
 == Hack Source 9
 
-[source,python]
-------
+--
 include::code/hack-9.py[]
-------
+--
 
