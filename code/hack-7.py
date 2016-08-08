@@ -1,31 +1,32 @@
-def myfunc():
-    return 6 / 2
-
-co = myfunc.__code__
-
-import binascii
-import dis
-
-bcode = co.co_code
-bcode = list(bcode)
-bcode[6] = "\x17"
-bcode = "".join(bcode)
-
 import new
 
-co2 = new.code(co.co_argcount,
-               co.co_nlocals,
-               co.co_stacksize,
-               co.co_flags,
-               bcode,
-               co.co_consts,
-               co.co_names,
-               co.co_varnames,
-               co.co_filename,
-               co.co_name,
-               co.co_firstlineno,
-               co.co_lnotab)
+myconsts = (None, "Hello Byte Code World!")
+mycode = ("\x64"   # LOAD_CONST
+          "\x01"   # 0x0001
+          "\x00"   # 
+          "\x47"   # PRINT_ITEM
+          "\x48"   # PRINT_NEWLINE
+          "\x64"   # LOAD_CONST
+          "\x00"   # 0x0000
+          "\x00"   #
+          "\x53")   # RETURN_VALUE
 
-myfunc.__code__ = co2
+# Create the code object
+co = new.code(0,         # co_argcount,
+              0,         # co_nlocals,
+              1,         # co_stacksize,
+              0,         # co_flags,
+              mycode,    # co_code,
+              myconsts,  # co_consts,
+              (),        # co_names
+              (),        # co_varnames
+              "test.py", # co_filename,
+              "myfunc",  # co_name,
+              0,         # co_firstlineno,
+              "")        # co_lnotab)
 
-print myfunc()
+# Create the function object
+myfunc = new.function(co, {})
+
+# Invoke the function
+myfunc()

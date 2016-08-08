@@ -1,0 +1,2 @@
+$(dl-files):
+	wget $@ $(dl-$(

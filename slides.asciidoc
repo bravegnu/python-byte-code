@@ -1,125 +1,580 @@
-= Python Byte Code Hacking
+= Python Byte Code Hacks
+Vijay Kumar <vijaykumar@zilogic.com>
 
-== Microprocessor Model v1
+== Python VM
 
-image::microprocessor-1.png[]
+=== Compilers & Interpreters
 
-== Microprocessor Model v2
+  * C -- compiler converts C source to machine instructions
 
-image::microprocessor-2.png[]
+  * GW-BASIC, the programs were interpreted line by line
 
-== Python Interpreter Model
+  * Python and Java
 
-   * Compiler - translates programs from one language to another
-     language
+    - source code is compiled to a intermediate language byte codes
+    - byte codes are then executed by an interpreter
 
-   * Python's compiler converts Python programs into byte code
-     instructions
+=== Java vs Python
 
-   * Python interpreter executes the byte code instructions
+  * Java, source code is compiled to byte code
+    - to reduce machine dependency
+    - to ncreasing portability
 
-   * Python interpreter is modelled after microprocessors
+  * Python, the source code is compiled to byte code
+    - to reduce parsing overhead
+    - to ease interpretation.
 
-== Python Interpreter Model (2)
+=== Program Representation
 
-  * Python objects are stored in a heap memory
+image::figures/lang-byte-code.png[align="center",width="60%"]
 
-  * Python interpreter creates, modifies and destroys objects in the
-    heap based on instrunctions in the byte code.
+=== What are Virtual Machines?
 
-image::py-vm-heap.png[]
+______
+Software that executes the byte code is called the abstract virtual
+machine. These virtual machines are modelled after microprocessors.
+______
 
-== Code Objects
+[role="two-column"]
+=== Microprocessor Model v1
 
-image::code-objects.png[]
+[role="left"]
+image::figures/microprocessor-1.png[align="center"]
 
-== Stack Machine
+[role="right"]
 
-  * Interpreters can be classified into types on how the operands /
-    results are stored:
-    - Register Machines
-    - Stack Machines
+  * A microprocessor is a device that reads data from memory,
+    processes it and writes back data to memory, based on instructions
 
-  * Demostrate a hypothetical Stack Machine with an example.
+  * Instructions specify which memory location to read data from, what
+    operation to perform and which memory location to write the result
+    to
 
+[role="two-column"]
+=== Microprocessor Model v2
+
+[role="left"]
+image::figures/microprocessor-2.png[align="center"]
+
+[role="right"]
+  * Instructions are themselves stored in memory
+
+  * A microprocessor is a device that reads data from memory,
+    processes it and writes back data to memory, based on
+    instructions, which are themselves stored / fetched from memory."
+
+[role="two-column"]
+=== Python Interpreter Model v1
+
+[role="left"]
+image::figures/py-vm-1.png[align="center"]
+
+[role="right"]
+  * Modelled after microprocessors
+
+  * Data is represented as objects stored in the heap
+
+  * Works by manipulating these objects in memory, based on
+    instructions
+
+  * Instructions specify what type of objects to create, which objects
+    to delete, the attribute of an object to be read / modified.
+
+[role="two-column"]
+=== Python Interpreter Model v2
+
+[role="left"]
+image::figures/py-vm-2.png[align="center"]
+
+[role="right"]
+  * Byte code instructions are themselves wrapped in "code objects"
+    and are also stored in the heap
+
+  * Python's compiler, parses functions / modules, compiles them and
+    creates code objects, which are then executed by the Python
+    interpreter
+
+=== Types of Virtual Machines
+
+  * Classification depending on how the operands are accessed and
+    results are stored, by instructions
+
+  * Types of Abstract Virtual Machines
+
+    1. Register Machines
+    2. Stack Machines
+
+=== Register Machines
+
+  * Register machines are more like traditional
+    microprocessors
+
+  * Instructions operate on register operands and store results in
+    registers
+
+=== Stack Machines
+
+  * Stack machines are best understood through an example
+
+  * Instructions, for a hypothetical stack machine, to add two
+    immediate values
++
 ------
-      loadi 1
-      loadi 2
-      add
-      loadi 3
-      add
+loadi 1
+loadi 2
+add
+loadi 4
+add
 ------
 
-== Stack Machine (2)
+=== Step 1
 
-Execution of the instructions is shown in the following diagram:
+image::figures/stack-machine-1.png[align="center",width="12%"]
 
-image::stack-machine.png[]
+=== Step 2
 
-== Python's Stack Machine
+image::figures/stack-machine-2.png[align="center",width="12%"]
 
-  * Python uses the Stack Machine approach
+=== Step 3
 
-  * Internal stack is a temporary area that contains pointers to
-    Python objects in the heap.
+image::figures/stack-machine-3.png[align="center",width="12%"]
 
-  * Instructions push and pop data on to the stack.
+=== Step 4
 
-== Python's Stack Machine
+image::figures/stack-machine-4.png[align="center",width="12%"]
 
-image::py-vm-stack.png[]
+=== Step 5
 
-== Hack Source 1
+image::figures/stack-machine-5.png[align="center",width="12%"]
 
---
+[role="two-column"]
+=== Python's Stack Machine
+
+[role="left"]
+image::figures/py-vm-stack-1.png[align="center"]
+
+[role="right"]
+  * Difference from hypothetical stack machine
+    - Objects are always stored in the heap
+    - Only the pointer to the object is stored in the stack
+
+[role="two-column"]
+=== Python's Stack Machine
+
+[role="left"]
+image::figures/py-vm-stack-1.png[align="center"]
+
+[role="right"]
+  * Scenario
+    - Two integer objects in the heap
+    - Stack now has pointers to the two objects
+
+[role="two-column"]
+=== Python's Stack Machine
+
+[role="left"]
+image::figures/py-vm-stack-2.png[align="center"]
+
+[role="right"]
+  * Instruction `BINARY_ADD`
+
+    - Pops off the top two objects `10` and `20`.
+    - Adds them which resulting in a new object `30`
+    - Pushes the pointer to the object on to the stack
+
+  * State of the stack after `BINARY_ADD`
+
+== Byte Code Hacks
+
+=== Getting Started
+
+[source,python]
+-------
 include::code/hack-1.py[]
---
+-------
 
-== Hack Source 2
+The function just divides two constants and returns the value back to
+the caller. 
 
---
+[role="two-column"]
+=== The Code Object
+
+[role="left"]
+[source,python]
+------
 include::code/hack-2.py[]
---
+------
 
-== Hack Source 3
+[role="right"]
+  * Code object is accessible from `myfunc.__code__`.
+
+  * `co_consts`, contains a tuple of constants used by the function.
+
+  * `co_code`, contains the byte code instructions, generated by
+    compiling the function
+
+[role="two-column"]
+=== The Code Object
+
+[role="left"]
+[source,python]
+------
+include::code/hack-2.py[]
+------
+
+[role="right"]
+  * Code object associated with every function
+
+  * Contains the byte code instructions and associated data to execute
+    the function
+
+=== Deciphering the Byte Code
 
 --
 include::code/hack-3.py[]
 --
 
-== Hack Source 4
+=== What does `0x64` mean?
 
---
-include::code/hack-4.py[]
---
+  * `dis` module has a mapping from opcodes to mnemonics
++
+[source,python]
+------
+>>> import dis
+>>> print dis.opname[0x64]
+------
 
-== Hack Source 5
+=== `LOAD_CONST` Instruction
 
---
-include::code/hack-5.py[]
---
+  * Followed by 2 byte integer operand
 
-== Hack Source 6
+  * Operand is an index into the `co_const` tuple
 
---
+  * Specifies the constant to be pushed / loaded into the stack
+
+  * Operand specified in this case `0x0001`, corresponds to the
+    constant `6`
+
+  * Instruction can thus be represented in mnemonics as
++
+------
+LOAD_CONST 1
+------
+
+=== Second Instruction
+
+------
+co_consts: (None, 6, 2)
+co_code:
+    0: 64
+    1: 01
+    2: 00
+    3: 64 <=
+    4: 02
+    5: 00
+    6: 15
+    7: 53
+------
+
+  * Second instruction is `LOAD_CONST`
+
+  * Operand is the index `0x0002`, which corresponds to the constant
+    `2`
+
+=== Decoded Instructions
+
+  * Instructions decoded so far
++
+------
+64    LOAD_CONST 1
+01
+00
+64    LOAD_CONST 2
+02
+00
+------
+
+=== Third Instruction
+
+------
+co_consts: (None, 6, 2)
+co_code:
+    0: 64
+    1: 01
+    2: 00
+    3: 64
+    4: 02
+    5: 00
+    6: 15 <=
+    7: 53
+------
+
+------
+>>> print dis.opname[0x15]
+------
+
+=== `BINARY_DIVIDE` Instruction
+
+  * Does not require any operands
+
+  * Pops top two values from the stack, and performs a divide and
+    pushes the result back on to the stack
+
+=== Fourth Instruction
+
+------
+co_consts: (None, 6, 2)
+co_code:
+    0: 64
+    1: 01
+    2: 00
+    3: 64
+    4: 02
+    5: 00
+    6: 15
+    7: 53 <=
+------
+
+------
+>>> print dis.opname[0x53]
+------
+
+=== `RETURN_VALUE` Instruction
+
+  * `RETURN_VALUE` instruction takes the top of the stack and returns
+    the value back to the caller.
+
+=== Complete Dis-assembly
+
+------
+64    LOAD_CONST 1
+01
+00
+64    LOAD_CONST 2
+02
+00
+15    BINARY_DIVIDE
+53    RETURN_VALUE
+------
+
+=== Writing a Dis-assembler
+
+  * Manual dis-assembly of code
+  * A disassembler runs throught byte code string
+    - prints the `opname` of the each byte code instruction
+  * Only catch is that _some_ of them take an operand
+
+=== Writing a Dis-assembler (Contd.)
+
+  * Code to determine if an opcode takes an operand
++
+[source,python]
+------
+if op > dis.HAVE_ARGUMENT:
+   print "opcode has an operand."
+else:
+   print "opcode does not have an operand."
+------
++
+  * link:{include:code/hack-4/full.py.datauri}["Click to download hack-4.py",filename="hack-4.py"]
+
+=== Built-in Disassembler
+
+The `dis` module has a `disassemble()` function:
+
+[source,python]
+------
+>>> help(dis.disassemble)
+Help on function disassemble in module dis:
+
+disassemble(co, lasti=-1)
+    Disassemble a code object.
+------
+
+=== Hacking Code Objects
+
+  * Modify the constants so that the tuple is `(None, 10, 2)` instead
+    of `(None, 6, 2)`
+
+  * Will that result in the program printing `5`?
+
+  * But code objects are immutable
+
+  * Create a new code object with the new value for `co_consts`
+
+  * link:{include:code/hack-5/full.py.datauri}["Click to download hack-5.py",filename="hack-5.py"]
+
+=== Hacking Code Objects
+
+The `new` module has the constructor to create the code object. The
+constructor takes a huge list of arguments, and we specify all of them
+from the old code object, except for the `co_consts`, for which we
+specify our new set of constants. The output of the code is shown
+below.
+
+------
+5
+------
+
+This does in fact modify the behaviour of the function / code
+object! We have successfully completed our first hack!
+
+=== Hacking the Byte Code String
+
+Now let's get a little bolder, and try to modify the byte code string
+instead. We will replace the `BINARY_DIVIDE` instruction with the
+`BINARY_ADD` instruction. The `BINARY_ADD` corresponds to opcode
+`0x17`. The `BINARY_DIVIDE` appears at offset 6 is the byte code
+string. The following snippet can be used to unpack, modify and repack
+the byte code string.
+
+------
+bcode = co.co_code
+bcode = list(bcode)
+bcode[6] = "\x17"
+bcode = "".join(bcode)
+------
+
+The following code builds upon this idea attempts to hack the byte
+code string.
+
+------
 include::code/hack-6.py[]
---
+------
 
-== Hack Source 7
+Now, when we run the code we get the following output, which is `6 + 2`
+instead of `6 / 2`!
 
---
+------
+8
+------
+
+=== Look Ma, No Hands!
+
+Now let's take this to a whole new level, by creating the code object
+for a function, without actually writing the Python function. The
+function that we are going to write is the classic "Hello World". The
+byte code instructions and the constants tuple for implementing this
+is shown below.
+
+------
+Consts: (None, "Hello Byte Code World!")
+Byte Code Instructions:
+    LOAD_CONST 1
+    PRINT_ITEM
+    PRINT_NEWLINE
+    LOAD_CONST 0
+    RETURN_VALUE
+------
+
+The `PRINT_ITEM` pops object from the top of the stack and prints
+it. The `PRINT_NEWLINE`, prints an newline character. The code returns
+`None`, to the caller. This is because every function in Python has to
+return something, if there is nothing to return, it returns `None`.
+
+The code to create the code object and the function object is shown
+below.
+
+------
 include::code/hack-7.py[]
---
+------
 
-== Hack Source 8
+We provide sane values for all other arguments to the code object
+constructor. The function object constructor is also available from
+the `new` module. Here's the output of the program.
 
---
+------
+Hello Byte Code World!
+------
+
+That indeed, did create a working Python function! The arguments to
+the code object constructor deserve a little more explanation.
+
+`co_argcount`:: An integer, that specifies the number of positional
+arguments, the function accepts. In our case, it is `0`.
+
+`co_nlocals`:: An integer, that specifies the number of local
+variables, including positional arguments, used by the function. In
+our case, it is again `0`.
+
+`co_stacksize`:: An integer, that specifies, the stack depth utilized
+by the code object. In our case, at any given point, we do not store
+more than 1 element in the stack.
+
+`co_flags`:: An integer, with bits indicating things like whether the
+function accepts variable number of arguments, whether the function is
+a generator, etc.
+
+`co_varnames`:: A tuple, containing the names of positional arguments
+and local variables. In our case, it is an empty tuple.
+
+`co_names`:: A tuple, containing names of identifiers other than local
+variables. In our case, it is an empty tuple.
+
+`co_filename`:: A string, specifying the file in which the function
+was present. In our case, we just use a dummy filename `test.py`.
+
+`co_name`:: A string, specifying the name of the function.
+
+`co_firstlineno`:: An integer, specifying the first line number of the
+function within the file.
+
+`co_lnotab`:: An string, that encodes the mapping of byte code offset
+to line numbers. Used while printing tracebacks. In our case, which
+just pass an empty string.
+
+=== More Bytes of Code
+
+We will now write a Python function, just as before, that will accept
+two arguments, add them and return the result, i.e the byte code
+equivalent of the following Python function.
+
+------
+def myfunc(a, b):
+    return a + b
+------
+
+The code to create the code object and the function object is shown
+below.
+
+------
 include::code/hack-8.py[]
---
+------
 
-== Hack Source 9
+Since we are trying to load arguments / local variables, we use the
+byte code instruction `LOAD_FAST`. The `LOAD_FAST` instruction loads
+the value of a local variable on to the stack. The instruction accepts
+an argument that specifies the local variable as an index into the
+`co_varnames` tuple.
 
---
-include::code/hack-9.py[]
---
+The argument count `co_argcount`, is specified as `2`. The no. of
+arguments and local variables `co_nlocals`, is specified as `2`. The
+stack size is specified as 2, since we push a maximum of two items
+into the stack. The names of the positional arguments / local
+variables `co_varnames`, is specified as `("a", "b")`.
 
+The output of the program is shown below.
+
+------
+myfunc(10, 20) => 30
+myfunc("abc", "def") => abcdef
+------
+
+=== Python vs Java Byte Code Instructions
+
+There are few more things to learn from the previous example. The
+`BINARY_ADD` instruction does not operate on integers, unlike the
+`ADD` instruction of a microprocessor. It operates on objects,
+provided they implement the `__add__()` or `__radd__()` magic
+methods. This is emphasized by the second function call, that invokes
+`myfunc()` with string arguments. This is what distinguishes Python's
+byte codes from Java's byte codes. Python's byte codes are there to
+simplify interpretation, they are more closer to the source
+language. Java's byte codes are there to reduce machine dependency,
+and as such they are more closer to the machine instructions.
+
+=== Conclusion
+
+Hope this exercised has helped people understand how Python's VM
+works. Well, this is not useful for writing production code, but
+at-least it is a fun way to learn how interpreters are implemented.

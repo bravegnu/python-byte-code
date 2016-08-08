@@ -3,9 +3,8 @@ def myfunc():
 
 co = myfunc.__code__
 
-import binascii
-import dis
+print "co_consts:", co.co_consts
+print "co_code:"
 
-print co.co_consts
-print binascii.hexlify(co.co_code)
-
+for i, ch in enumerate(co.co_code):
+    print "    %d: %02X" % (i, ord(ch))

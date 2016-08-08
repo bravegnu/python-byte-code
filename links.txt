@@ -1,0 +1,9 @@
+http://stackoverflow.com/questions/25594231/why-is-not-faster-than-bool-in-python-or-speed-of-python-functions-vs-s/25594345#25594345
+http://stackoverflow.com/questions/3815359/while-1-vs-for-whiletrue-why-is-there-a-difference
+http://stackoverflow.com/questions/869229/why-is-looping-over-range-in-python-faster-than-using-a-while-loop/869347#869347
+http://stackoverflow.com/questions/34239159/cost-of-using-109-over-1000000000/34239211#34239211
+http://stackoverflow.com/questions/13047895/efficient-ways-to-duplicate-array-list-in-python/13048047#13048047
+http://stackoverflow.com/questions/37172464/python-local-variable-initialization/37172897#37172897
+http://stackoverflow.com/questions/22208987/why-is-the-use-of-e-n-for-creating-a-list-of-single-item-repeated-n-times/22209524#22209524
+http://stackoverflow.com/questions/664118/whats-the-difference-between-dict-and/664143#664143
+https://doughellmann.com/blog/2012/11/12/the-performance-impact-of-using-dict-instead-of-in-cpython-2-7-2/
