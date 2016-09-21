@@ -4,12 +4,12 @@ def myfunc():
     return 6 / 2
 ### END: myfunc.py
 
+# Modifying the code object
 ### START: hack.py
 import new
 
 co = myfunc.__code__
 myconsts = (None, 10, 2)
-
 co2 = new.code(co.co_argcount,
                co.co_nlocals,
                co.co_stacksize,
@@ -24,6 +24,7 @@ co2 = new.code(co.co_argcount,
                co.co_lnotab)
 ### END: hack.py
 
+# Injecting the code object
 ### START: inject.py
 myfunc.__code__ = co2
 

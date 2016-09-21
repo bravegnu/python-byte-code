@@ -1,5 +1,6 @@
 = Python Byte Code Hacks
 Vijay Kumar <vijaykumar@zilogic.com>
+:data-uri:
 
 == Python VM
 
@@ -228,12 +229,6 @@ include::code/hack-2.py[]
   * Contains the byte code instructions and associated data to execute
     the function
 
-=== Deciphering the Byte Code
-
---
-include::code/hack-3.py[]
---
-
 === What does `0x64` mean?
 
   * `dis` module has a mapping from opcodes to mnemonics
@@ -376,7 +371,7 @@ else:
    print "opcode does not have an operand."
 ------
 +
-  * link:{include:code/hack-4/full.py.datauri}["Click to download hack-4.py",filename="hack-4.py"]
+  * link:{include:code/hack-4/full.py.datauri}["Get disas.py",filename="disas.py"]
 
 === Built-in Disassembler
 
@@ -391,6 +386,8 @@ disassemble(co, lasti=-1)
     Disassemble a code object.
 ------
 
+== Hack 1
+
 === Hacking Code Objects
 
   * Modify the constants so that the tuple is `(None, 10, 2)` instead
@@ -402,61 +399,70 @@ disassemble(co, lasti=-1)
 
   * Create a new code object with the new value for `co_consts`
 
-  * link:{include:code/hack-5/full.py.datauri}["Click to download hack-5.py",filename="hack-5.py"]
+  * link:{include:code/hack-5/full.py.datauri}["Get hack-1.py",filename="hack-1.py"]
 
-=== Hacking Code Objects
+[role="two-column"]
+=== Hack Explained
 
-The `new` module has the constructor to create the code object. The
-constructor takes a huge list of arguments, and we specify all of them
-from the old code object, except for the `co_consts`, for which we
-specify our new set of constants. The output of the code is shown
-below.
-
+[role="left"]
+[source,python]
 ------
-5
+include::code/hack-5/hack.py[]
 ------
 
-This does in fact modify the behaviour of the function / code
-object! We have successfully completed our first hack!
+[role="right"]
+  * `new` module has the constructor to create the code objects
+
+  * Takes a huge list of arguments
+
+  * All arguments are specifid from the old code object, except for the `co_consts`
+
+  * A new set of constants is specified instead
+
+[role="two-column"]
+=== Hack Explained
+
+[role="left"]
+[source,python]
+------
+include::code/hack-5/inject.py[]
+------
+
+[role="right"]
+  * Old code object is replaced with new code object
+
+== Hack 2
 
 === Hacking the Byte Code String
 
-Now let's get a little bolder, and try to modify the byte code string
-instead. We will replace the `BINARY_DIVIDE` instruction with the
-`BINARY_ADD` instruction. The `BINARY_ADD` corresponds to opcode
-`0x17`. The `BINARY_DIVIDE` appears at offset 6 is the byte code
-string. The following snippet can be used to unpack, modify and repack
-the byte code string.
+  * Modify the byte code string
+  * Replace the `BINARY_DIVIDE` instruction with `BINARY_ADD`
+  * `BINARY_ADD` corresponds to opcode `0x17`
+  * `BINARY_DIVIDE` appears at offset 6 is the byte code string
+  * Need to replace it with `BINARY_ADD`
 
+=== `BINARY_DIVIDE` to `BINARY_ADD`
+
+  * Code to unpack, modify and repack the byte code string
++
+[source,python]
 ------
-bcode = co.co_code
-bcode = list(bcode)
+bcode = co.co_code     # \x64\x01\x00\x64\x02\x00\x15\x53
+bcode = list(bcode)    # ['\x64', '\x01', ..., '\x15', '\x53']
 bcode[6] = "\x17"
-bcode = "".join(bcode)
+bcode = "".join(bcode) # \x64\x01\x00\x64\x02\x00\x17\x53
 ------
++
+  * link:{include:code/hack-6.py.datauri}["Get hack-2.py",filename="hack-2.py"]
 
-The following code builds upon this idea attempts to hack the byte
-code string.
-
-------
-include::code/hack-6.py[]
-------
-
-Now, when we run the code we get the following output, which is `6 + 2`
-instead of `6 / 2`!
-
-------
-8
-------
+== Hack 3
 
 === Look Ma, No Hands!
 
-Now let's take this to a whole new level, by creating the code object
-for a function, without actually writing the Python function. The
-function that we are going to write is the classic "Hello World". The
-byte code instructions and the constants tuple for implementing this
-is shown below.
-
+  * Create code object for a function, without actually writing the Python function
+  * Let's implement the classic "Hello World"
+  * Byte code instructions and the constants tuple for implementing this
++
 ------
 Consts: (None, "Hello Byte Code World!")
 Byte Code Instructions:
@@ -467,114 +473,121 @@ Byte Code Instructions:
     RETURN_VALUE
 ------
 
-The `PRINT_ITEM` pops object from the top of the stack and prints
-it. The `PRINT_NEWLINE`, prints an newline character. The code returns
-`None`, to the caller. This is because every function in Python has to
-return something, if there is nothing to return, it returns `None`.
+=== Instructions Explained
 
-The code to create the code object and the function object is shown
-below.
+  * `PRINT_ITEM` pops object from the top of the stack and prints it
 
-------
-include::code/hack-7.py[]
-------
+  * `PRINT_NEWLINE`, prints an newline character
 
-We provide sane values for all other arguments to the code object
-constructor. The function object constructor is also available from
-the `new` module. Here's the output of the program.
+  * Code returns `None`, to the caller, as required by Python
 
-------
-Hello Byte Code World!
-------
+  * link:{include:code/hack-7.py.datauri}["Get hack-3.py",filename="hack-3.py"]
 
-That indeed, did create a working Python function! The arguments to
-the code object constructor deserve a little more explanation.
+=== Code Object Constructor
 
-`co_argcount`:: An integer, that specifies the number of positional
-arguments, the function accepts. In our case, it is `0`.
+  * `co_argcount`
+     - Specifies the number of positional arguments
+     - Our value is `0`
 
-`co_nlocals`:: An integer, that specifies the number of local
-variables, including positional arguments, used by the function. In
-our case, it is again `0`.
+  * `co_nlocals`
+    - Specifies the number of local variables, including positional arguments
+    - Our value is `0`
 
-`co_stacksize`:: An integer, that specifies, the stack depth utilized
-by the code object. In our case, at any given point, we do not store
-more than 1 element in the stack.
+  * `co_stacksize`
+    - Specifies stack depth utilized by the code object
+    - At any given point, we do not store more than 1 element in the stack
 
-`co_flags`:: An integer, with bits indicating things like whether the
-function accepts variable number of arguments, whether the function is
-a generator, etc.
+=== Code Object Constructor (Contd.)
 
-`co_varnames`:: A tuple, containing the names of positional arguments
-and local variables. In our case, it is an empty tuple.
+  * `co_flags`
+    - Specifies using bit flags whether the function accepts variable
+      number of arguments, whether the function is a generator, etc.
 
-`co_names`:: A tuple, containing names of identifiers other than local
-variables. In our case, it is an empty tuple.
+  * `co_varnames`
+    - Specifies the names of positional arguments and local variables
+    - Empty tuple
 
-`co_filename`:: A string, specifying the file in which the function
-was present. In our case, we just use a dummy filename `test.py`.
+  * `co_names`
+    - Specifies the names of identifiers other than local variables
+    - Empty tuple
 
-`co_name`:: A string, specifying the name of the function.
+=== Code Object Constructor (Contd.)
 
-`co_firstlineno`:: An integer, specifying the first line number of the
-function within the file.
+  * `co_filename`
+    - Specifies the file in which the function was present
+    - Dummy filename `test.py`
 
-`co_lnotab`:: An string, that encodes the mapping of byte code offset
-to line numbers. Used while printing tracebacks. In our case, which
-just pass an empty string.
+  * `co_name`
+    - Specifies the name of the function.
+
+  * `co_firstlineno`
+    - Specifies the first line number of the function within the file
+
+=== Code Object Constructor (Contd.)
+
+  * `co_lnotab`
+    - Encodes the mapping of byte code offset to line numbers
+    - Used while printing tracebacks
+    - Empty string
+
+== Hack 4
 
 === More Bytes of Code
 
-We will now write a Python function, just as before, that will accept
-two arguments, add them and return the result, i.e the byte code
-equivalent of the following Python function.
+  * A Python function, that will accept two arguments, add them and
+    return the result
 
+  * The byte code equivalent of the following Python function
++
+[source,python]
 ------
 def myfunc(a, b):
     return a + b
 ------
 
-The code to create the code object and the function object is shown
-below.
+=== `LOAD_FAST` Instruction
 
+  * Arguments / local variables, can be loaded using `LOAD_FAST`
+  * Loads the value of a local variable on to the stack
+  * Instruction accepts an argument that specifies the local variable
+    as an index into the `co_varnames` tuple.
+  * link:{include:code/hack-8.py.datauri}["Get hack-4.py",filename="hack-4.py"]
++
 ------
-include::code/hack-8.py[]
-------
-
-Since we are trying to load arguments / local variables, we use the
-byte code instruction `LOAD_FAST`. The `LOAD_FAST` instruction loads
-the value of a local variable on to the stack. The instruction accepts
-an argument that specifies the local variable as an index into the
-`co_varnames` tuple.
-
-The argument count `co_argcount`, is specified as `2`. The no. of
-arguments and local variables `co_nlocals`, is specified as `2`. The
-stack size is specified as 2, since we push a maximum of two items
-into the stack. The names of the positional arguments / local
-variables `co_varnames`, is specified as `("a", "b")`.
-
-The output of the program is shown below.
-
-------
-myfunc(10, 20) => 30
-myfunc("abc", "def") => abcdef
+Var Names: ("a", "b")
+Byte Code:
+    LOAD_FAST 0
+    LOAD_FAST 1
+    BINARY_ADD
+    RETURN_VALUE
 ------
 
-=== Python vs Java Byte Code Instructions
+=== Code Object Constructor
 
-There are few more things to learn from the previous example. The
-`BINARY_ADD` instruction does not operate on integers, unlike the
-`ADD` instruction of a microprocessor. It operates on objects,
-provided they implement the `__add__()` or `__radd__()` magic
-methods. This is emphasized by the second function call, that invokes
-`myfunc()` with string arguments. This is what distinguishes Python's
-byte codes from Java's byte codes. Python's byte codes are there to
-simplify interpretation, they are more closer to the source
-language. Java's byte codes are there to reduce machine dependency,
-and as such they are more closer to the machine instructions.
+  * No. of arguments, `co_argcount`, is `2`
+  * No. of arguments and local variables `co_nlocals`, is `2`
+  * Stack size `co_stacksize`, is specified as 2
+    - A maximum of two items is pushed into the stack.
+  * Names of the positional arguments / local variables `co_varnames`,
+    is `("a", "b")`
 
-=== Conclusion
+== Python vs Java 
 
-Hope this exercised has helped people understand how Python's VM
-works. Well, this is not useful for writing production code, but
-at-least it is a fun way to learn how interpreters are implemented.
+=== Python Byte Code Instructions
+
+  * `BINARY_ADD` instruction 
+    - Does not operate on integers
+    - Unlike the `ADD` instruction of a microprocessor
+    - Operates on objects, provided they implement the `__add__()` or
+      `__radd__()` magic methods
+
+  * Distinguishes Python's byte codes from Java's byte codes
+  * Python's byte codes are there to simplify interpretation
+  * More closer to the source language
+
+=== Java Byte Code Instructions
+
+  * Java's byte codes are there to reduce machine dependency
+  * Are more closer to the machine instructions
+
+== Thank You
