@@ -36,64 +36,74 @@ Software that executes the byte code is called the abstract virtual
 machine. These virtual machines are modelled after microprocessors.
 ______
 
-[role="two-column"]
 === Microprocessor Model v1
 
-[role="left"]
-image::figures/microprocessor-1.png[align="center"]
-
-[role="right"]
+image::figures/microprocessor-1.png[align="center",width="50%"]
 
   * A microprocessor is a device that reads data from memory,
     processes it and writes back data to memory, based on instructions
 
-  * Instructions specify which memory location to read data from, what
-    operation to perform and which memory location to write the result
-    to
+=== Microprocessor Model v1
 
-[role="two-column"]
+image::figures/microprocessor-1.png[align="center",width="50%"]
+
+  * Instructions specify, memory location to read operands from,
+    operation to perform, memory location to write the result to
+
 === Microprocessor Model v2
 
-[role="left"]
-image::figures/microprocessor-2.png[align="center"]
+image::figures/microprocessor-2.png[align="center",width="50%"]
 
-[role="right"]
+  * Improvised model of micropprocessor
+
   * Instructions are themselves stored in memory
+
+=== Microprocessor Model v2
+
+image::figures/microprocessor-2.png[align="center",width="50%"]
 
   * A microprocessor is a device that reads data from memory,
     processes it and writes back data to memory, based on
     instructions, which are themselves stored / fetched from memory."
 
-[role="two-column"]
+=== Microprocessor Model v3
+
+image::figures/microprocessor-3.png[align="center",width="50%"]
+
+  * Registers: memory locations within microprocessors
+  * Operands and results are temporarily stored in registers
+
 === Python Interpreter Model v1
 
-[role="left"]
-image::figures/py-vm-1.png[align="center"]
+image::figures/py-vm-1.png[align="center",width="50%"]
 
-[role="right"]
-  * Modelled after microprocessors
-
-  * Data is represented as objects stored in the heap
+  * Modelled after microprocessors. Data is represented as objects
+    stored in the heap
 
   * Works by manipulating these objects in memory, based on
     instructions
 
-  * Instructions specify what type of objects to create, which objects
+=== Python Interpreter Model v1
+
+image::figures/py-vm-1.png[align="center",width="50%"]
+
+  * Instructions specify the type of objects to create, which objects
     to delete, the attribute of an object to be read / modified.
 
-[role="two-column"]
 === Python Interpreter Model v2
 
-[role="left"]
-image::figures/py-vm-2.png[align="center"]
+image::figures/py-vm-2.png[align="center",width="50%"]
 
-[role="right"]
   * Byte code instructions are themselves wrapped in "code objects"
     and are also stored in the heap
 
-  * Python's compiler, parses functions / modules, compiles them and
-    creates code objects, which are then executed by the Python
-    interpreter
+=== Python Interpreter Model v2
+
+image::figures/py-vm-2.png[align="center",width="50%"]
+
+  * Python's compiler, parses functions / modules, converts them to code objects
+
+  * Python interpreter executes the code objects
 
 === Types of Virtual Machines
 
@@ -107,18 +117,25 @@ image::figures/py-vm-2.png[align="center"]
 
 === Register Machines
 
-  * Register machines are more like traditional
-    microprocessors
+  * Register machines are more like traditional microprocessors
 
-  * Instructions operate on register operands and store results in
-    registers
+  * Expression: `1 + 2 + 4`
++
+------
+LOADK R1, 1
+LOADK R2, 2
+ADD R3, R2, R1		# R3 = R2 + R1
+LOADK R1, 4
+ADD R3, R3, R1		# R3 = R3 + R1
+------
++
+  * Examples:
+    - Lua VM
+    - Dalvick VM
 
 === Stack Machines
 
-  * Stack machines are best understood through an example
-
-  * Instructions, for a hypothetical stack machine, to add two
-    immediate values
+  * Instructions, for a hypothetical stack machine
 +
 ------
 loadi 1
@@ -148,42 +165,27 @@ image::figures/stack-machine-4.png[align="center",width="12%"]
 
 image::figures/stack-machine-5.png[align="center",width="12%"]
 
-[role="two-column"]
-=== Python's Stack Machine
+=== Python's Stack Machine: Difference
 
-[role="left"]
-image::figures/py-vm-stack-1.png[align="center"]
+image::figures/py-vm-stack-1.png[align="center",width="45%"]
 
-[role="right"]
-  * Difference from hypothetical stack machine
-    - Objects are always stored in the heap
-    - Only the pointer to the object is stored in the stack
+  * Objects are always stored in the heap
+  * Only the pointer to the object is stored in the stack
 
-[role="two-column"]
-=== Python's Stack Machine
+=== Python's Stack Machine: Scenario
 
-[role="left"]
-image::figures/py-vm-stack-1.png[align="center"]
+image::figures/py-vm-stack-1.png[align="center",width="45%"]
 
-[role="right"]
-  * Scenario
-    - Two integer objects in the heap
-    - Stack now has pointers to the two objects
+  * Two integer objects in the heap
+  * Stack now has pointers to the two objects
 
-[role="two-column"]
-=== Python's Stack Machine
+=== Python's Stack Machine: `BINARY_ADD`
 
-[role="left"]
-image::figures/py-vm-stack-2.png[align="center"]
+image::figures/py-vm-stack-2.png[align="center",width="45%"]
 
-[role="right"]
-  * Instruction `BINARY_ADD`
-
-    - Pops off the top two objects `10` and `20`.
-    - Adds them which resulting in a new object `30`
-    - Pushes the pointer to the object on to the stack
-
-  * State of the stack after `BINARY_ADD`
+  * Pops off the top two objects `10` and `20`.
+  * Adds them which resulting in a new object `30`
+  * Pushes the pointer to the object on to the stack
 
 == Byte Code Hacks
 
