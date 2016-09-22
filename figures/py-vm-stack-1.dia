@@ -567,7 +567,7 @@ Interpreter#</dia:string>
         <dia:point val="34,11.95"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="33.45,11.4888;34.55,12.4113"/>
+        <dia:rectangle val="33.45,11.4887;34.55,12.4112"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -581,7 +581,7 @@ Interpreter#</dia:string>
             <dia:real val="0.98777778353455625"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="34,12.2238"/>
+            <dia:point val="34,12.2237"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>

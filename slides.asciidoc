@@ -2,6 +2,18 @@
 Vijay Kumar <vijaykumar@zilogic.com>
 :data-uri:
 
+=== Overview
+
+ * Python VM
+   - Process Virtual Machines
+   - Stack vs Register Machines
+   - Pythons's Stack Machines
+
+ * Byte Code Hacks
+   - Code Objects
+   - Modifying Code Objects
+   - Handcrafted Code Objects
+
 == Python VM
 
 === Compilers & Interpreters
@@ -167,24 +179,28 @@ image::figures/stack-machine-5.png[align="center",width="12%"]
 
 === Python's Stack Machine: Difference
 
-image::figures/py-vm-stack-1.png[align="center",width="45%"]
-
   * Objects are always stored in the heap
   * Only the pointer to the object is stored in the stack
+  * Operation of `BINARY_ADD` instruction
 
-=== Python's Stack Machine: Scenario
+=== Step 1: Initial State
 
-image::figures/py-vm-stack-1.png[align="center",width="45%"]
+image::figures/py-vm-stack-1.png[align="center",width="60%"]
 
-  * Two integer objects in the heap
-  * Stack now has pointers to the two objects
+  * Two integer objects in the heap, stack has pointers to the two
+    objects
 
-=== Python's Stack Machine: `BINARY_ADD`
+=== Step 2: Add the Stack Operands
 
-image::figures/py-vm-stack-2.png[align="center",width="45%"]
+image::figures/py-vm-stack-2.png[align="center",width="60%"]
 
-  * Pops off the top two objects `10` and `20`.
-  * Adds them which resulting in a new object `30`
+  * Pops off the top two objects `10` and `20`, adds them resulting in
+    a new object `30`
+
+=== Step 3: Final State
+
+image::figures/py-vm-stack-3.png[align="center",width="60%"]
+
   * Pushes the pointer to the object on to the stack
 
 == Byte Code Hacks
