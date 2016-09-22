@@ -7,7 +7,7 @@ Vijay Kumar <vijaykumar@zilogic.com>
  * Python VM
    - Process Virtual Machines
    - Stack vs Register Machines
-   - Pythons's Stack Machines
+   - Python's Stack Machines
 
  * Byte Code Hacks
    - Code Objects
@@ -31,7 +31,7 @@ Vijay Kumar <vijaykumar@zilogic.com>
 
   * Java, source code is compiled to byte code
     - to reduce machine dependency
-    - to ncreasing portability
+    - to increasing portability
 
   * Python, the source code is compiled to byte code
     - to reduce parsing overhead
@@ -66,7 +66,7 @@ image::figures/microprocessor-1.png[align="center",width="50%"]
 
 image::figures/microprocessor-2.png[align="center",width="50%"]
 
-  * Improvised model of micropprocessor
+  * Improvised model of microprocessor
 
   * Instructions are themselves stored in memory
 
@@ -373,7 +373,7 @@ co_code:
 === Writing a Dis-assembler
 
   * Manual dis-assembly of code
-  * A disassembler runs throught byte code string
+  * A disassembler runs through byte code string
     - prints the `opname` of the each byte code instruction
   * Only catch is that _some_ of them take an operand
 
@@ -433,7 +433,7 @@ include::code/hack-5/hack.py[]
 
   * Takes a huge list of arguments
 
-  * All arguments are specifid from the old code object, except for the `co_consts`
+  * All arguments are specified from the old code object, except for the `co_consts`
 
   * A new set of constants is specified instead
 
