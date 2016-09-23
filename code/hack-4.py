@@ -3,20 +3,20 @@ import dis
 
 ### START: disas.py
 def disas(code):
-    code = co.co_code
+    bcode = code.co_code
     state = "opcode"
 
-    for op in code:
+    for op in bcode:
         op = ord(op)
         if state == "opcode":
-            print "%02X" % op, dis.opname[op]
+            print hex(op), dis.opname[op]
             if op > dis.HAVE_ARGUMENT:
                 state = "arg1"
         elif state == "arg1":
-            print "%02X" % op
+            print hex(op)
             state = "arg2"
         elif state == "arg2":
-            print "%02X" % op
+            print hex(op)
             state = "opcode"
 ### END: disas.py
 
