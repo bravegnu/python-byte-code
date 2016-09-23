@@ -1,5 +1,4 @@
 import dis
-from binascii import hexlify
 
 def myfunc():
     return 6 / 2
@@ -9,12 +8,9 @@ def myfunc():
 co = myfunc.__code__
 
 bcode = co.co_code
-print hexlify(bcode)
 bcode = list(bcode)
-print [hexlify(c) for c in bcode]
 bcode[6] = "\x17"
 bcode = "".join(bcode)
-print hexlify(bcode)
 
 import new
 
